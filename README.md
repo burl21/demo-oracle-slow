@@ -1,5 +1,5 @@
 # Analyses
-The reconfirmed problem is that when you search for the (`document.name` with `UPPER(document.name)` the system takes up to 4min.
+The reconfirmed problem is that when you search for the `document.name` with `UPPER(document.name)` the system takes up to 4min.
 This simple application tries to reproduce the code structure in production, use H2 with file storage as I don't have an oracle 19c db.
 
 If the `db.populate`property is set to true then will insert `db.how-many-records` in DOCUMENTS and ACTIVITIES.
