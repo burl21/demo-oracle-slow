@@ -223,7 +223,8 @@ public class LogsService {
 
 ## PRODUCTION
 
-The DOCUMENTS table have approximately 2M records The ACTIVITIES table have approximately 7M records
+The DOCUMENTS table contains approximately 2M records 
+The ACTIVITIES table contains approximately 7M records.
 
 ### Db
 
