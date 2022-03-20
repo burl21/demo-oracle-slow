@@ -258,7 +258,7 @@ where rownum <= ?
 
 
 ### SQL FIDDLE
-#### [View Execution Plan][1]
+#### [View Execution Plan](http://sqlfiddle.com/#!4/b3c15/3/0)
 
 ## CONFIGURATION
 - **Database**: Oracle 19c
