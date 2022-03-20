@@ -253,10 +253,9 @@ where rownum <= ?
 #### With document.name filter, page 10 and results
     2.900642325 seconds
 #### With document.name filter, page 10 and no results
-    240.123813697 seconds
-    sqlpus: 2-3 seconds
-
-
+    Without IDX_DOC_NAME_UPPER: 240.123813697 seconds sqlpus: 8-9 seconds
+    With IDX_DOC_NAME_UPPER: 110.123813697(not stable) seconds sqlpus: 3-4 seconds
+    
 ### SQL FIDDLE
 #### [View Execution Plan](http://sqlfiddle.com/#!4/b3c15/3/0)
 
