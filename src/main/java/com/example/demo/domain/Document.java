@@ -22,7 +22,7 @@ public class Document {
 	@Column(name = "NAME", nullable = false, length = 1024)
 	private String name;
 
-	@Column(name = "SIZE", nullable = false)
+	@Column(name = "DOC_SIZE", nullable = false)
 	private long size;
 
 	@Temporal(TemporalType.TIMESTAMP)

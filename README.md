@@ -1,6 +1,8 @@
 # Analyses
-The reconfirmed problem is that when you search for the `document.name` with `UPPER(document.name)` the system takes up to 4min.
-This simple application tries to reproduce the code structure in production, use H2 with file storage as I don't have an oracle 19c db.
+
+The reconfirmed problem is that when you search for the `document.name` with `UPPER(document.name)` the system takes up
+to 4min. This simple application tries to reproduce the code structure in production, use H2 with file storage as I
+don't have an oracle 19c db.
 
 If the `db.populate`property is set to true then will insert `db.how-many-records` in DOCUMENTS and ACTIVITIES.
 
@@ -12,10 +14,10 @@ In production `V_LOGS` is mapped as `@Table`
 -- DOCUMENTS
 CREATE TABLE DOCUMENTS
 (
-    ID      NUMBER(16) PRIMARY KEY,
-    NAME    VARCHAR(1024) NOT NULL,
-    SIZE    NUMBER(16)    NOT NULL,
-    CREATED TIMESTAMP     NOT NULL
+    ID       NUMBER(16) PRIMARY KEY,
+    NAME     VARCHAR(1024) NOT NULL,
+    DOC_SIZE NUMBER(16)    NOT NULL,
+    CREATED  TIMESTAMP     NOT NULL
     --others, removed for brevity
 );
 CREATE INDEX IDX_DOC_NAME_UPPER ON DOCUMENTS (UPPER(NAME));
@@ -42,8 +44,7 @@ CREATE INDEX IDX_ACT_DOC_ID ON ACTIVITIES (DOC_ID);
 
 -- LOGS
 CREATE VIEW V_LOGS AS
-SELECT ROWNUM AS ID,
-       CNAME,
+SELECT CNAME,
        ACTIVITIES.USR_ID,
        PRT_ID,
        DOC_ID
@@ -128,13 +129,13 @@ public class Document {
 	@Column(name = "NAME", nullable = false, length = 1024)
 	private String name;
 
-	@Column(name = "SIZE", nullable = false)
+	@Column(name = "DOC_SIZE", nullable = false)
 	private long size;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATED", nullable = false)
 	private Date created;
-
+	
 	//others, removed for brevity
 }
 ~~~
@@ -169,8 +170,8 @@ public class LogsSpecification implements Specification<LogsView> {
 		String[] keys = filter.getName().split("\\.");
 		if (filter.getPredicate() == LIKE) {
 			predicate = builder.like(
-					builder.lower(PredicateUtils.getChildPath(root, keys)),
-					("%" + filter.getValue() + "%").toLowerCase());
+					builder.upper(PredicateUtils.getChildPath(root, keys)),
+					("%" + filter.getValue() + "%").toUpperCase());
 		} else {
 			predicate = builder.equal(
 					PredicateUtils.getChildPath(root, keys),
@@ -212,10 +213,7 @@ public class LogsService {
 
 
 	private boolean isNumeric(String strNum) {
-		if (strNum == null) {
-			return false;
-		}
-		return pattern.matcher(strNum).matches();
+		return strNum != null && pattern.matcher(strNum).matches();
 	}
 }
 
@@ -223,8 +221,7 @@ public class LogsService {
 
 ## PRODUCTION
 
-The DOCUMENTS table contains approximately 2M records 
-The ACTIVITIES table contains approximately 7M records.
+The DOCUMENTS table contains approximately 2M records The ACTIVITIES table contains approximately 7M records.
 
 ### Db
 
@@ -252,15 +249,20 @@ where rownum <= ?
 ~~~
 
 #### Without document.name filter, page 10
-
     1.228738106 seconds
-
 #### With document.name filter, page 10 and results
-
     2.900642325 seconds
-
 #### With document.name filter, page 10 and no results
-
     240.123813697 seconds
     sqlpus: 2-3 seconds
 
+
+### SQL FIDDLE
+#### [View Execution Plan][1]
+
+## CONFIGURATION
+- **Database**: Oracle 19c
+- **Jdk**: 11
+- **Ojdbc8**: 21.5.0
+- **SpringBoot**: 2.6.4
+- **Hibernate**: 5.6.5.Final
