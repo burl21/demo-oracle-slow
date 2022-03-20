@@ -10,7 +10,7 @@ In production `V_LOGS` is mapped as `@Table`
 
 ## DB SCHEMA
 
-~~~oracle
+~~~sql
 -- DOCUMENTS
 CREATE TABLE DOCUMENTS
 (
